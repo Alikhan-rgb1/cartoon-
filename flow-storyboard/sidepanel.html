@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Flow Storyboard Auto</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <h1>Раскадровка в Flow</h1>
+
+  <section>
+    <h2>0. Сценарий по кадрам (без промптов)</h2>
+    <p class="muted">Вставьте согласованный сценарий («КАДР 1 … КАДР 2 …»): расширение само напишет промпты через Gemini API и сделает кадры. Если промпты у вас уже есть, пропустите этот блок и вставьте их в поле ниже.</p>
+    <textarea id="scenario" rows="6" placeholder="КАДР 1 … КАДР 2 … (согласованный сценарий)"></textarea>
+    <input id="apiKey" type="password" placeholder="Ключ Gemini API (бесплатный: aistudio.google.com/apikey)" autocomplete="off">
+    <label class="field"><input type="checkbox" id="noAi"> Без ИИ: собрать промпты мгновенно по шаблону (ключ не нужен)</label>
+    <details>
+      <summary>Настройки промптов</summary>
+      <label class="field"><input type="checkbox" id="outfitRef" checked> Одежду героев с фото брать с референса (не придумывать). Выключите, если референсы — просто лица.</label>
+      <label class="field">Источник промптов
+        <select id="source">
+          <option value="auto">Авто: Gemini API, при лимите — Gem на сайте</option>
+          <option value="api">Только Gemini API</option>
+          <option value="gem">Только Gem на сайте Gemini</option>
+        </select>
+      </label>
+      <label class="field">Ссылка на ваш Gem «Раскадровка» (запасной путь)
+        <input id="gemUrl" placeholder="https://gemini.google.com/gem/…">
+      </label>
+      <label class="field">Модель (пусто = подберётся сама)
+        <input id="model" placeholder="gemini-flash-latest">
+      </label>
+      <label class="field">Стиль (последняя строка каждого промпта)
+        <input id="style">
+      </label>
+      <label class="field">Пожелания клиента (одежда, время года, места…)
+        <textarea id="notes" rows="2" placeholder="Например: действие осенью, у мамы длинные волосы"></textarea>
+      </label>
+    </details>
+    <div class="row"><button id="fetchPrompts">Сделать промпты</button></div>
+  </section>
+
+  <section>
+    <h2>1. Раскадровка с промптами</h2>
+    <textarea id="script" rows="10" placeholder="Сюда попадут готовые промпты. Или вставьте свои вручную: КАДР 1 … Plaintext … КАДР 2 …"></textarea>
+    <div class="row">
+      <label>Сколько кадров сделать:
+        <input id="count" type="number" min="1" value="24">
+      </label>
+      <span id="found" class="muted"></span>
+    </div>
+    <div id="foundChars" class="muted"></div>
+    <div id="castInfo" class="muted"></div>
+  </section>
+
+  <section>
+    <h2>2. Персонажи</h2>
+    <p class="muted">Подпись — как героя называет сценарий: имя («Алексей») или роль («папа»). Если в сценарии и то и другое, пишите через запятую: «Алексей, папа». Роли знают синонимы (папа = отец = father), имена ИИ узнаёт и в любом склонении.</p>
+    <div id="chars"></div>
+    <div class="row">
+      <input id="charName" placeholder="Подпись: папа">
+      <input id="charFile" type="file" accept="image/*">
+      <button id="addChar">Добавить</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>3. Запуск</h2>
+    <div class="row">
+      <button id="start" class="primary">Сделать раскадровку</button>
+      <button id="pause">Пауза</button>
+      <button id="reset">Начать заново</button>
+    </div>
+    <label class="field"><input type="checkbox" id="download"> Ещё и скачивать каждый кадр в «Загрузки/Cartoon» (по умолчанию выключено: кадры остаются во Flow)</label>
+    <progress id="bar" value="0" max="1"></progress>
+    <div id="status" class="muted">Готово к запуску.</div>
+    <ul id="log"></ul>
+  </section>
+
+  <script src="parser.js"></script>
+  <script src="promptgen.js"></script>
+  <script src="sidepanel.js"></script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+# временное и локальное
+node_modules/
+*.log
+*.tmp
+_t.js
+_*.txt
+.DS_Store
+Thumbs.db
