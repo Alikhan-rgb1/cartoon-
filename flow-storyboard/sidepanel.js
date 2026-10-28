@@ -142,9 +142,11 @@ const setStatus = (t) => ($("status").textContent = t);
 const log = (t) => { const li = document.createElement("li"); li.textContent = t; $("log").prepend(li); };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+// Вкладка с проектом Flow. Адрес бывает с номером аккаунта: flow.google.com/u/1/project/… (второй аккаунт Google).
+// Если открыто несколько проектов, берём тот, что сейчас на виду.
 async function flowTab() {
-  const [tab] = await chrome.tabs.query({ url: "https://flow.google.com/project/*" });
-  return tab;
+  const tabs = (await chrome.tabs.query({ url: "https://flow.google.com/*" })).filter((t) => /\/project\//.test(t.url || ""));
+  return tabs.find((t) => t.active) || tabs[0];
 }
 
 // Отправка команды в content.js на странице Flow.
